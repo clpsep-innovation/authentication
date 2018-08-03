@@ -1,0 +1,1293 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: '[UAMAPI] Unified Access Management API'
+  description: >
+    This API supports all the operations required to support the authentication
+    and authorization of multiple users on multiple applications.
+  contact:
+    name: Loqr
+    url: 'https://loqr.io'
+    email: info@loqr.io
+basePath: /v1
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /user/access:
+    post:
+      tags:
+        - user/access
+      operationId: authenticateUser
+      summary: Authenticate User
+      description: |
+        Authenticate User
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: false
+          schema:
+            $ref: '#/definitions/UserAccess'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/UserAccessData'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+  '/user/access/{userId}':
+    post:
+      tags:
+        - user/access
+      operationId: checkUserAccess
+      summary: Check User Access
+      description: |
+        Check User Access
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: userId
+          in: path
+          description: User ID to check access
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserAccessCheckAccess'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/UserAccessCheckAccessData'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+  '/user/access/{userId}/device':
+    post:
+      tags:
+        - user/access
+      operationId: checkUserAccessDevice
+      summary: Check User Access Via Device Loqr Push Notification
+      description: |
+        Check User Access Via Device Loqr Push Notification
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: userId
+          in: path
+          description: User ID to check access
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserAccessCheckAccessDevice'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/UserAccessDataDetails'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+  '/user/access/{userId}/pwd':
+    post:
+      tags:
+        - user/access
+      operationId: checkUserAccessPassword
+      summary: Check User Access Via Password
+      description: |
+        Check User Access Via Password
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: userId
+          in: path
+          description: User ID to check access
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserAccessCheckAccessPassword'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/UserAccessDataDetails'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+  '/user/access/{userId}/sso':
+    post:
+      tags:
+        - user/access
+      operationId: checkUserAccessSSO
+      summary: Continue a existing access transaction (e.g. choose user mapping)
+      description: |
+        Continue a existing access transaction (e.g. choose user mapping)
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: userId
+          in: path
+          description: User ID to check access
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserAccessSSO'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/UserAccessSSOData'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+  /consumer:
+    post:
+      tags:
+        - consumer
+      operationId: createConsumer
+      summary: Create a new consumer
+      description: |
+        Create a new consumer
+
+        ---
+        __Notes:__
+
+          * The name must be unique
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/ConsumerNew'
+      responses:
+        '201':
+          description: Created
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+    get:
+      tags:
+        - consumer
+      operationId: getAllConsumers
+      summary: Obtain the list of the consumers
+      description: |
+        Obtain the list of the consumers
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/ConsumerList'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+  '/consumer/{consumerId}':
+    get:
+      tags:
+        - consumer
+      operationId: getOneConsumer
+      summary: Obtain the information about a consumer
+      description: |
+        Obtain the information about a consumer
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: consumerId
+          in: path
+          description: Consumer ID to Find
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/ConsumerDetails'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+    put:
+      tags:
+        - consumer
+      operationId: editOneConsumer
+      summary: Edit the information about a consumer
+      description: |
+        Edit the information about a consumer
+
+        ---
+        __Notes:__
+
+          * Should only be sent the parameters that needed to be changed
+          * The name must be unique
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: consumerId
+          in: path
+          description: ConsumerId ID to Edit
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/ConsumerEdit'
+      responses:
+        '200':
+          description: Success
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+    delete:
+      tags:
+        - consumer
+      operationId: deleteOneConsumer
+      summary: Delete the information about a consumer
+      description: |
+        Delete the information about a consumer
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: consumerId
+          in: path
+          description: Consumer ID to Delete
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+  '/consumer/{consumerId}/state':
+    put:
+      tags:
+        - consumer
+      operationId: setOneConsumerState
+      summary: Set the state of a consumer
+      description: |
+        Set the state of a consumer
+
+        ---
+        __Notes:__
+
+          * After revogation the consumer cannot be changed anymore
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: consumerId
+          in: path
+          description: Consumer ID to Set as Default
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/ConsumerState'
+      responses:
+        '200':
+          description: Success
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+  '/consumer/{consumerId}/credentials':
+    put:
+      tags:
+        - consumer
+      operationId: regenerateConsumerCredentials
+      summary: Regenerate Consumer Credentials
+      description: |
+        Regenerate Consumer Credentials
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: consumerId
+          in: path
+          description: Consumer ID to Regenerate Credentials
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+  /oauth2/authorize:
+    post:
+      tags:
+        - oauth2
+      operationId: parseOAuth2AuthorizeRequest
+      summary: Parse an Incoming OAuth2 Authorize Request
+      description: |
+        Parse an Incoming OAuth2 Authorize Request
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/OAuth2AuthorizeRequest'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/OAuth2AuthorizeRequestParsed'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+  /oauth2/authorize/response:
+    post:
+      tags:
+        - oauth2
+      operationId: buildOAuth2AuthorizeResponse
+      summary: Build a OAuth2 Authorize Response
+      description: |
+        Build a OAuth2 Authorize Response
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/OAuth2AuthorizeResponse'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/OAuth2AuthorizeResponseBuilt'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+  /oauth2/token:
+    post:
+      tags:
+        - oauth2
+      operationId: buildOAuth2TokenResponse
+      summary: Build a OAuth2 Token Response
+      description: |
+        Build a OAuth2 Token Response
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/OAuth2Token'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/OAuth2TokenBuilt'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+  /oauth2/userinfo:
+    get:
+      tags:
+        - oauth2
+      operationId: getOAuth2UserInfo
+      summary: Get the User Info of a User
+      description: |
+        Get the User Info of a User
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/OAuth2UserInfoBuilt'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+  /saml/login/sp:
+    get:
+      tags:
+        - saml
+      operationId: parseSAMLInboundRequestSPGET
+      summary: >-
+        Parse an Incoming SAML Authentication Request (SP Initiated
+        HTTP-Redirect)
+      description: |
+        Parse an Incoming SAML Authentication Request (SP Initiated)
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: query
+          required: true
+          schema:
+            $ref: '#/definitions/SAMLRequestSPGET'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/SAMLRequestSPParsed'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+    post:
+      tags:
+        - saml
+      operationId: parseSAMLInboundRequestSPPOST
+      summary: Parse an Incoming SAML Authentication Request (SP Initiated HTTP-POST)
+      description: |
+        Parse an Incoming SAML Authentication Request (SP Initiated)
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/SAMLRequestSPPOST'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/SAMLRequestSPParsed'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+  /saml/login/idp:
+    get:
+      tags:
+        - saml
+      operationId: parseSAMLInboundRequestIdP
+      summary: Parse an Incoming SAML Authentication Request (IdP Initiated)
+      description: |
+        Parse an Incoming SAML Authentication Request (IdP Initiated)
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: query
+          required: true
+          schema:
+            $ref: '#/definitions/SAMLRequestIdP'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/SAMLRequestIdPParsed'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+  /saml/login/response:
+    post:
+      tags:
+        - saml
+      operationId: buildSAMLOutboundResponse
+      summary: Build a SAML Authentication Response
+      description: |
+        Build a SAML Authentication Response
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/SAMLResponse'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/SAMLResponseBuilt'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+  /saml/metadata/idp:
+    post:
+      tags:
+        - saml
+      operationId: buildSAMLIdPMetadata
+      summary: Build a SAML IdP Metadata Response
+      description: |
+        Build a SAML IdP Metadata Response
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/SAMLMetadata'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/SAMLMetadataBuilt'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+  '/app/data/{appId}/user/{userId}':
+    post:
+      tags:
+        - app/data
+      operationId: saveApplicationDataFromUser
+      summary: Save Useful Data About a User Concerning The Application
+      description: >
+        Save Useful Data About a User Concerning The Application
+
+        If the association between the application and the user does not exist,
+        it will be created.
+
+        If it exists the information will be replaced.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: appId
+          in: path
+          description: Application ID
+          required: true
+          type: string
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/AppData'
+      responses:
+        '200':
+          description: Success
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+    get:
+      tags:
+        - app/data
+      operationId: retrieveApplicationDataFromUser
+      summary: Retrieve Application Data About a User Concerning The Application
+      description: |
+        Retrieve Application Data About a User Concerning The Application
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: appId
+          in: path
+          description: Application ID
+          required: true
+          type: string
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/AppData'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+    put:
+      tags:
+        - app/data
+      operationId: updateApplicationDataFromUser
+      summary: Update Data About a User Concerning The Application
+      description: >
+        Update Data About a User Concerning The Application
+
+        The association between the user and the application must exist
+        beforehand
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: appId
+          in: path
+          description: Application ID
+          required: true
+          type: string
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/AppData'
+      responses:
+        '200':
+          description: Success
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+    delete:
+      tags:
+        - app/data
+      operationId: deleteApplicationDataFromUser
+      summary: Delete Data About a User Concerning The Application
+      description: |
+        Delete Data About a User Concerning The Application
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: appId
+          in: path
+          description: Application ID
+          required: true
+          type: string
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '500':
+          $ref: '#/responses/InternalServerError'
+definitions:
+  ErrorResponse:
+    title: Error Response
+    type: object
+    properties:
+      code:
+        type: string
+        description: Alphanumeric error code.
+        example: XXXX-XXXX-XXXX
+      message:
+        type: string
+        example: Something Went Wrong
+  BasicInfo:
+    type: object
+    properties:
+      basicInfo:
+        type: object
+        description: Push Notification Metadata
+        required:
+          - v
+          - ip
+          - username
+          - ts
+        properties:
+          v:
+            type: string
+            example: '1.0'
+          browser:
+            type: string
+            example: Google Chrome
+          os:
+            type: string
+            example: Windows
+          ip:
+            type: string
+            example: 172.10.10.20
+          country:
+            type: string
+            example: PT
+          city:
+            type: string
+            example: Porto
+          ts:
+            type: number
+            example: 1515579477
+          domain:
+            type: string
+            example: Loqr
+          username:
+            type: string
+            example: alice
+  AuthMechanism:
+    type: object
+    properties:
+      authType:
+        type: string
+        example: device
+      authMethod:
+        type: string
+        example: default
+  ConsumerNew:
+    type: object
+    description: Information needed to create a new consumer
+    required:
+      - name
+    properties:
+      name:
+        type: string
+        example: Consumer1
+      descrption:
+        type: string
+        example: First Consumer
+      state:
+        type: string
+        example: active
+      scope:
+        type: array
+        items:
+          type: string
+          example: read_users
+  ConsumerData:
+    type: object
+    description: Model that represents the information about a consumer
+    properties:
+      consumerId:
+        type: string
+        example: 7A7E6F38-9DF7-4EC6-A340-A2F63F535861
+      name:
+        type: string
+        example: Consumer1
+      description:
+        type: string
+        example: First Consumer
+      state:
+        type: string
+        example: active
+  ConsumerList:
+    type: array
+    items:
+      $ref: '#/definitions/ConsumerData'
+  ConsumerDetails:
+    type: object
+    description: Model that represents the information about a consumer
+    properties:
+      consumerId:
+        type: string
+        example: 7A7E6F38-9DF7-4EC6-A340-A2F63F535861
+      name:
+        type: string
+        example: Consumer1
+      description:
+        type: string
+        example: First Consumer
+      state:
+        type: string
+        example: active
+      scope:
+        type: array
+        items:
+          type: string
+          example: read_users
+      authorizedIPs:
+        type: array
+        items:
+          type: string
+          example: 127.0.0.1
+      consumerSecret:
+        type: string
+        example: 'Shhh, it is a secret'
+  ConsumerEdit:
+    type: object
+    description: Information needed to edit a consumer
+    properties:
+      name:
+        type: string
+        example: Consumer1
+      description:
+        type: string
+        example: First Consumer
+      state:
+        type: string
+        example: active
+      scope:
+        type: array
+        items:
+          type: string
+          example: read_users
+      authorizedIPs:
+        type: array
+        items:
+          type: string
+          example: 127.0.0.1
+  ConsumerState:
+    type: object
+    description: Information needed to edit a consumer state
+    properties:
+      state:
+        type: string
+        example: suspended
+  UserAccessUserAuthenticated:
+    type: object
+    properties:
+      domainId:
+        type: string
+        example: 7A7E6F38-9DF7-4EC6-A340-A2F63F535861
+      userId:
+        type: string
+        example: 7A7E6F38-9DF7-4EC6-A340-A2F63F535861
+      identity:
+        type: object
+        properties:
+          username:
+            type: string
+            example: alice
+          name:
+            type: string
+            example: Alice
+          email:
+            type: string
+            example: alice@mail.com
+          phoneNumber:
+            type: string
+            example: '+15417543010'
+      groups:
+        type: array
+        items:
+          type: string
+          example: developers
+  UserAccessUserMapping:
+    type: array
+    items:
+      type: object
+      properties:
+        mapId:
+          type: string
+          example: 7A7E6F38-9DF7-4EC6-A340-A2F63F535861
+        username:
+          type: string
+          example: bob
+  UserAccess:
+    type: object
+    required:
+      - domainId
+      - username
+    properties:
+      domainId:
+        type: string
+        example: 7A7E6F38-9DF7-4EC6-A340-A2F63F535861
+      username:
+        type: string
+        example: alice
+      transactionId:
+        type: string
+        example: c6b01f1e8f662326b5175e4bd2373f7c31aedd7ddd36878413b75ac0701f03fe
+  UserAccessData:
+    type: object
+    properties:
+      userId:
+        type: string
+        example: 7A7E6F38-9DF7-4EC6-A340-A2F63F535861
+      transactionId:
+        type: string
+        example: c6b01f1e8f662326b5175e4bd2373f7c31aedd7ddd36878413b75ac0701f03fe
+      authMechanisms:
+        type: array
+        items:
+          $ref: '#/definitions/AuthMechanism'
+  UserAccessDataDetails:
+    type: object
+    properties:
+      user:
+        $ref: '#/definitions/UserAccessUserAuthenticated'
+      userMapping:
+        type: array
+        items:
+          $ref: '#/definitions/UserAccessUserMapping'
+  UserAccessCheckAccess:
+    type: object
+    required:
+      - domainId
+      - transactionId
+    properties:
+      domainId:
+        type: string
+        example: 7A7E6F38-9DF7-4EC6-A340-A2F63F535861
+      transactionId:
+        type: string
+        example: c6b01f1e8f662326b5175e4bd2373f7c31aedd7ddd36878413b75ac0701f03fe
+  UserAccessCheckAccessData:
+    type: object
+    properties:
+      transactionId:
+        type: string
+        example: c6b01f1e8f662326b5175e4bd2373f7c31aedd7ddd36878413b75ac0701f03fe
+      authMechanisms:
+        type: array
+        items:
+          $ref: '#/definitions/AuthMechanism'
+  UserAccessCheckAccessDevice:
+    allOf:
+      - $ref: '#/definitions/BasicInfo'
+      - type: object
+        required:
+          - transactionId
+        properties:
+          transactionId:
+            type: string
+            example: c6b01f1e8f662326b5175e4bd2373f7c31aedd7ddd36878413b75ac0701f03fe
+  UserAccessCheckAccessPassword:
+    type: object
+    properties:
+      transactionId:
+        type: string
+        example: c6b01f1e8f662326b5175e4bd2373f7c31aedd7ddd36878413b75ac0701f03fe
+      pwd:
+        type: string
+        example: Super Strong Password
+  UserAccessSSO:
+    type: object
+    required:
+      - transactionId
+    properties:
+      transactionId:
+        type: string
+        example: c6b01f1e8f662326b5175e4bd2373f7c31aedd7ddd36878413b75ac0701f03fe
+      mapId:
+        type: string
+        example: 7A7E6F38-9DF7-4EC6-A340-A2F63F535861
+  UserAccessSSOData:
+    type: object
+    properties:
+      transactionId:
+        type: string
+        example: c6b01f1e8f662326b5175e4bd2373f7c31aedd7ddd36878413b75ac0701f03fe
+  SAMLRequestSPGET:
+    type: object
+    required:
+      - SAMLRequest
+    properties:
+      SAMLRequest:
+        type: string
+        example: PHNhbWxwOkF1dGhuUm...
+      Signature:
+        type: string
+        example: bM441nuRIzAjKeMM8Rhe...
+      SigAlg:
+        type: string
+        example: 'http://www.w3.org/2000/09/xmldsig#rsa-sha256'
+      RelayState:
+        type: string
+        example: 'http://uam.loqr.io/relaystate'
+  SAMLRequestSPPOST:
+    type: object
+    required:
+      - SAMLRequest
+    properties:
+      SAMLRequest:
+        type: string
+        example: PHNhbWxwOkF1dGhuUm...
+      RelayState:
+        type: string
+        example: 'http://uam.loqr.io/relaystate'
+  SAMLRequestSPParsed:
+    type: object
+    properties:
+      transactionId:
+        type: string
+        example: c6b01f1e8f662326b5175e4bd2373f7c31aedd7ddd36878413b75ac0701f03fe
+      sp:
+        type: object
+        properties:
+          name:
+            type: string
+            example: GitLab
+          url:
+            type: string
+            example: 'https://gitlab.com'
+          logo:
+            type: string
+            example: 'https://uam.loqr.io/gitlab/logo.png'
+  SAMLRequestIdP:
+    type: object
+    required:
+      - spId
+    properties:
+      spId:
+        type: string
+        example: 7A7E6F38-9DF7-4EC6-A340-A2F63F535861
+  SAMLRequestIdPParsed:
+    type: object
+    properties:
+      transactionId:
+        type: string
+        example: c6b01f1e8f662326b5175e4bd2373f7c31aedd7ddd36878413b75ac0701f03fe
+      sp:
+        type: object
+        properties:
+          name:
+            type: string
+            example: GitLab
+          url:
+            type: string
+            example: 'https://gitlab.com'
+          logo:
+            type: string
+            example: 'https://uam.loqr.io/gitlab/logo.png'
+  SAMLResponse:
+    type: object
+    required:
+      - transactionId
+      - idpUri
+    properties:
+      transactionId:
+        type: string
+        example: c6b01f1e8f662326b5175e4bd2373f7c31aedd7ddd36878413b75ac0701f03fe
+      idpUri:
+        type: string
+        example: 'https://loqr.io'
+  SAMLResponseBuilt:
+    type: object
+    properties:
+      SAMLResponse:
+        type: string
+        example: PHNhbWxwOlJlc3BvbnNlIHht...
+      type:
+        type: string
+        example: SAMLResponse
+      postUrl:
+        type: string
+        example: 'https://sp.com/saml'
+      relayState:
+        type: string
+        example: 'http://uam.loqr.io/relaystate'
+  SAMLMetadata:
+    type: object
+    required:
+      - spId
+      - idpUri
+    properties:
+      spId:
+        type: string
+        example: 7A7E6F38-9DF7-4EC6-A340-A2F63F535861
+      idpUri:
+        type: string
+        example: 'https://loqr.io'
+  SAMLMetadataBuilt:
+    type: object
+    properties:
+      SAMLMetadata:
+        type: string
+        example: PHNhbWxwOlJlc3BvbnNlIHht...
+  OAuth2AuthorizeRequest:
+    type: object
+    required:
+      - response_type
+      - client_id
+    properties:
+      response_type:
+        type: string
+        example: id_token token
+      client_id:
+        type: string
+        example: 7A7E6F38-9DF7-4EC6-A340-A2F63F535861
+      redirect_uri:
+        type: string
+        example: 'http://client.com/redirect'
+      scope:
+        type: string
+        example: read write openid
+      state:
+        type: string
+        example: oijwrufi9suw3fupgw3gfs78o3fgw3
+      nonce:
+        type: string
+        example: 389y4r9dty9n3f9d4n57ftd97tf973tf7dnf
+  OAuth2AuthorizeRequestParsed:
+    type: object
+    properties:
+      transactionId:
+        type: string
+        example: c6b01f1e8f662326b5175e4bd2373f7c31aedd7ddd36878413b75ac0701f03fe
+      client:
+        type: object
+        properties:
+          name:
+            type: string
+            example: GitLab
+          url:
+            type: string
+            example: 'https://gitlab.com'
+          logo:
+            type: string
+            example: 'https://uam.loqr.io/gitlab/logo.png'
+  OAuth2AuthorizeResponse:
+    type: object
+    required:
+      - transactionId
+    properties:
+      transactionId:
+        type: string
+        example: c6b01f1e8f662326b5175e4bd2373f7c31aedd7ddd36878413b75ac0701f03fe
+  OAuth2AuthorizeResponseBuilt:
+    type: object
+    properties:
+      access_token:
+        type: string
+        example: eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXV...
+      token_type:
+        type: string
+        example: Bearer
+      expires_in:
+        type: number
+        example: 3600
+      id_token:
+        type: string
+        example: eyJhbGciOiJIUzUxMiIsI...
+      redirectUri:
+        type: string
+        example: 'https://client.com/redirect?code=grgcredgwet&state=rereytr'
+  OAuth2Token:
+    type: object
+    properties:
+      grant_type:
+        type: string
+        example: client_credentials
+      client_id:
+        type: string
+        example: 'e80ed768-253d-40f1-9863-33ddb61d085c'
+      client_secret:
+        type: string
+        example: 'c6b01f1e8f662326b5175e4bd2373f7c31aedd7ddd36878413b75ac0701f03fe'
+  OAuth2TokenBuilt:
+    type: object
+    properties:
+      access_token:
+        type: string
+        example: eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXV...
+      token_type:
+        type: string
+        example: Bearer
+      expires_in:
+        type: number
+        example: 3600
+      id_token:
+        type: string
+        example: eyJhbGciOiJIUzUxMiIsI...
+  OAuth2UserInfoBuilt:
+    type: object
+    properties:
+      sub:
+        type: string
+        example: alice
+      username:
+        type: string
+        example: alice
+      name:
+        type: string
+        example: Alice
+      email:
+        type: string
+        example: alice@mail.com
+  AppData:
+    type: object
+    description: JSON Object with the information you want
+    properties:
+      data:
+        type: object
+responses:
+  Unauthorized:
+    description: Unauthorized
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+  InternalServerError:
+    description: Internal Server Error
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+parameters: {}
+tags:
+  - name: user/access
+    description: User Access Related Routes
+  - name: consumer
+    description: API Consumer Management Related Routes
+  - name: oauth2
+    description: Inbound OAuth2/OIDC Related Routes
+  - name: saml
+    description: Inbound SAML Related Routes
+  - name: app/data
+    description: Application Data Management Related Routes
